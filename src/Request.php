@@ -648,7 +648,7 @@ class Request extends Message implements ServerRequestInterface
      *
      * @return static|Request
      */
-    public static function createFromGlobalsAllowCLI(array $globals = null) : Request
+    public static function createFromGlobalsResolveCLIRequest(array $globals = null) : Request
     {
         $globals = static::manipulateIfCLIRequest(
             ($globals === null
