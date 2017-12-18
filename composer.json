@@ -1,7 +1,7 @@
 {
     "name": "apatis/http-message",
     "description": "PSR7 Http Message Implementation",
-    "type": "project",
+    "type": "library",
     "require": {
         "php": "^7.0",
         "psr/http-message": "~1.0",
