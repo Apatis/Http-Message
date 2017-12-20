@@ -176,7 +176,7 @@ class Message implements MessageInterface
         }
 
         $value = $this->trimHeaderValues($value);
-        $normalized = strtolower($name);
+        $normalized = $this->normalizeHeaderKey($name);
         $clone = clone $this;
         if (isset($clone->headerNames[$normalized])) {
             $name = $clone->headerNames[$normalized];
@@ -196,7 +196,7 @@ class Message implements MessageInterface
      */
     public function withoutHeader($name) : MessageInterface
     {
-        $normalized = strtolower($name);
+        $normalized = $this->normalizeHeaderKey($name);
         $clone = clone $this;
         if (!isset($this->headerNames[$normalized])) {
             return $clone;
@@ -233,12 +233,16 @@ class Message implements MessageInterface
     }
 
     /**
+     * Set header
+     *
      * @param string $name
      * @param string $value
      */
     protected function setHeader(string $name, string $value)
     {
-        $this->setHeaders([$name => $value]);
+        $normalized = $this->normalizeHeaderKey($name);
+        $clone->headerNames[$normalized] = $name;
+        $clone->headers[$name] = $this->trimHeaderValues([$value]);
     }
 
     /**
