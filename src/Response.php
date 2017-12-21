@@ -223,4 +223,17 @@ class Response extends Message implements ResponseInterface
     {
         return $this->statusMessageList;
     }
+
+    /**
+     * Write data into stream
+     *
+     * @param string $data data to write
+     *
+     * @return static|ResponseInterface
+     */
+    public function write(string $data) : ResponseInterface
+    {
+        $this->getBody()->write($data);
+        return $this;
+    }
 }
