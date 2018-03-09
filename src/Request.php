@@ -25,6 +25,7 @@
 
 namespace Apatis\Http\Message;
 
+use Apatis\Http\Cookie\Cookies;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
@@ -681,7 +682,7 @@ class Request extends Message implements ServerRequestInterface
         $uploadedFiles = UploadedFile::createFromGlobals($globals);
         $headers       = static::parseForHeadersFromGlobal($globals);
         $request       = new static($method, $uri, $headers, $globals, [], $body, $uploadedFiles);
-        $cookies       = $request->getHeader('Cookie');
+        $cookies       = Cookies::parseHeader($request->getHeader('Cookie', []));
 
         /**
          * @var Request $request
