@@ -172,7 +172,10 @@ class Uri implements UriInterface
      */
     public function removeDefaultPort()
     {
-        if ($this->port !== null && isset($this->defaultPorts[$this->getScheme()])) {
+        if ($this->port !== null
+            && isset($this->defaultPorts[$this->getScheme()])
+            && $this->defaultPorts[$this->getScheme()] === $this->port
+        ) {
             $this->port = null;
         }
     }
