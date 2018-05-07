@@ -198,16 +198,18 @@ class UploadedFile implements UploadedFileInterface
     {
         $parsed = [];
         foreach ($uploadedFiles as $field => $uploadedFile) {
-            if (is_array($field['name'])) {
-                foreach (array_keys($field['name']) as $key) {
+            if (!is_array($uploadedFile) || !isset($uploadedFile['name'])) {
+                continue;
+            }
+            if (is_array($uploadedFile['name'])) {
+                foreach (array_keys($uploadedFile['name']) as $key) {
                     $parsed[$field][$key] = [
                         'name'     => $uploadedFile['name'][$key],
                         'type'     => $uploadedFile['type'][$key],
                         'tmp_name' => $uploadedFile['tmp_name'][$key],
                         'error'    => $uploadedFile['error'][$key],
                         'size'     => $uploadedFile['size'][$key],
-                    ]
-                    ;
+                    ];
                     $parsed[$field] = self::parseFromArrayUploadedFiles($parsed[$field]);
                 }
             } else {
