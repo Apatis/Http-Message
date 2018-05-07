@@ -88,8 +88,14 @@ class UploadedFile implements UploadedFileInterface
         int $error = UPLOAD_ERR_OK
     ) {
         $this->file = $file;
-        $this->clientFilename = $clientFileName;
-        $this->clientMediaType = $clientMediaType;
+        $this->clientFilename  = $clientFileName;
+        $this->clientMediaType = $clientMediaType === null && file_exists($file)
+            ? mime_content_type($file) 
+            : $clientMediaType;
+        $this->size = $size === null && file_exists($file)
+            ? filesize($file)
+            : $size;
+        $this->error = $error;
     }
 
     /**
