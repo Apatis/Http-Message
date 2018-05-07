@@ -129,7 +129,7 @@ class Request extends Message implements ServerRequestInterface
         $this->method        = is_string($method) ? strtoupper($method) : '';
         $this->uri           = $uri;
         $this->serverParams  = $serverParams;
-        $this->uploadedFiles = $uploadedFiles;
+        $this->uploadedFiles = UploadedFile::parseFromArrayUploadedFiles($uploadedFiles);
         $this->cookies       = $cookies;
         if (! isset($serverParams['SERVER_PROTOCOL'])) {
             $serverParams['SERVER_PROTOCOL'] = 'HTTP/1.1';
