@@ -192,12 +192,17 @@ class UploadedFile implements UploadedFileInterface
     /**
      * @param array $uploadedFiles
      *
-     * @return array|UploadedFile[]|UploadedFile[][]
+     * @return UploadedFile[]|UploadedFile[][]
      */
-    protected static function parseFromArrayUploadedFiles(array $uploadedFiles) : array
+    public static function parseFromArrayUploadedFiles(array $uploadedFiles) : array
     {
         $parsed = [];
         foreach ($uploadedFiles as $field => $uploadedFile) {
+            if ($uploadedFile instanceof UploadedFileInterface) {
+                $parsed[$field] = $uploadedFile;
+                continue;
+            }
+
             if (!is_array($uploadedFile) || !isset($uploadedFile['name'])) {
                 continue;
             }
@@ -231,13 +236,14 @@ class UploadedFile implements UploadedFileInterface
      *
      * @param array $globals The global server variables.
      *
-     * @return array|null A normalized tree of UploadedFile instances or null if none are provided.
+     * @return UploadedFile[]|UploadedFile[][] A normalized tree
+     *  of UploadedFile instances or null if none are provided.
      */
-    public static function createFromGlobals(array $globals = null)
+    public static function createFromGlobals(array $globals = null) : array
     {
         $globals = $globals === null
-            || ! isset($globals['_FILES'])
-            || ! is_array($globals['_FILES'])
+            || ! isset($globals[static::GLOBAL_KEY_NAME])
+            || ! is_array($globals[static::GLOBAL_KEY_NAME])
             ? (isset($_FILES) ? $_FILES : [])
             : $globals;
         return static::parseFromArrayUploadedFiles($globals);
