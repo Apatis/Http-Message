@@ -241,8 +241,8 @@ class Message implements MessageInterface
     protected function setHeader(string $name, string $value)
     {
         $normalized = $this->normalizeHeaderKey($name);
-        $clone->headerNames[$normalized] = $name;
-        $clone->headers[$name] = $this->trimHeaderValues([$value]);
+        $this->headerNames[$normalized] = $name;
+        $this->headers[$name] = $this->trimHeaderValues([$value]);
     }
 
     /**

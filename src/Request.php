@@ -682,7 +682,7 @@ class Request extends Message implements ServerRequestInterface
         $uploadedFiles = UploadedFile::createFromGlobals($globals);
         $headers       = static::parseForHeadersFromGlobal($globals);
         $request       = new static($method, $uri, $headers, $globals, [], $body, $uploadedFiles);
-        $cookies       = Cookies::parseHeader($request->getHeader('Cookie', []));
+        $cookies       = Cookies::parseHeader($request->getHeader('Cookie'));
 
         /**
          * @var Request $request

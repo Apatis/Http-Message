@@ -31,8 +31,9 @@ use Psr\Http\Message\StreamInterface;
  * Class Stream
  * @package Apatis\Http\Message
  *
- * This Stream support ZLIB (GZIP) stream implementation
- * but on some case it can't be fully work on some case
+ * This Stream support zLib (GZIP) stream implementation
+ * but on some case it can't be fully work on some case.
+ * @link http://php.net/manual/en/ref.zlib.php
  */
 class Stream implements StreamInterface
 {
@@ -156,6 +157,8 @@ class Stream implements StreamInterface
     }
 
     /**
+     * Helper callback processor
+     *
      * @param string $task
      * @param array ...$params
      *
@@ -169,14 +172,15 @@ class Stream implements StreamInterface
         }
 
         $task = strtolower($task);
-        // default using f$task -> eg fopen() on gzip using gzopen
-        $fn   = "f{$task}";
+        $fn = 'f';
         if ($this->streamType === 'ZLIB') {
             if ($task === 'stat') {
-                return [];
+                return false;
             }
-            $fn = "gz{$task}";
+            $fn = 'gz';
         }
+        // default using f$task -> eg fopen() on gzip using gzopen
+        $fn   .= $task;
         if (! function_exists($fn)) {
             return false;
         }
@@ -189,15 +193,12 @@ class Stream implements StreamInterface
                     throw new \RuntimeException('Cannot write to a non-writable stream');
                 }
 
-                if (isset($params[1]) && $params[1]) {
-                    return $fn($this->stream, $params[0], $params[1]);
-                }
-
-                return $fn($this->stream, $params[0]);
+                $params[1] = isset($params[1]) ? $params[1] : SEEK_SET;
+                return $fn($this->stream, $params[0], $params[1]);
             case 'read':
                 return $fn($this->stream, $params[0]);
             default:
-                return $fn($this->stream);
+                return $fn($this->stream, ...$params);
         }
     }
 
@@ -224,8 +225,12 @@ class Stream implements StreamInterface
         }
 
         $result         = $this->stream;
-        $this->stream   = $this->size = $this->uri = null;
-        $this->readable = $this->writable = $this->seekable = false;
+        $this->stream   = null;
+        $this->size     = null;
+        $this->uri      = null;
+        $this->readable = false;
+        $this->writable = false;
+        $this->seekable = false;
 
         return $result;
     }
@@ -303,7 +308,11 @@ class Stream implements StreamInterface
 
         if ($this->processStreamCallback(__FUNCTION__, (int)$offset, $whence) === -1) {
             throw new \RuntimeException(
-                'Unable to seek to stream position ' . $offset . ' with whence ' . var_export($whence, true)
+                sprintf(
+                    'Unable to seek to stream position  %d with whence %s',
+                    (int) $offset,
+                    var_export($whence, true)
+                )
             );
         }
     }
