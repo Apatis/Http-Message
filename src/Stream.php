@@ -193,8 +193,10 @@ class Stream implements StreamInterface
                     throw new \RuntimeException('Cannot write to a non-writable stream');
                 }
 
-                $params[1] = isset($params[1]) ? $params[1] : SEEK_SET;
-                return $fn($this->stream, $params[0], $params[1]);
+                if (isset($params[1])) {
+                   return $fn($this->stream, $params[0], $params[1]);
+                }
+                return $fn($this->stream, $params[0]);
             case 'read':
                 return $fn($this->stream, $params[0]);
             default:
